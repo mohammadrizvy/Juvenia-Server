@@ -14,13 +14,17 @@ app.use(express.json());
 const verifyJwt = (req, res, next) => {
   const authorization = req.headers.authorization;
   if (!authorization) {
-    return res.status(401).send({ error: true, message: "Unauthorized access" });
+    return res
+      .status(401)
+      .send({ error: true, message: "Unauthorized access" });
   }
 
   const token = authorization.split(" ")[1];
   jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, decoded) => {
     if (err) {
-      return res.status(401).send({ error: true, message: "Unauthorized access" });
+      return res
+        .status(401)
+        .send({ error: true, message: "Unauthorized access" });
     }
     req.decoded = decoded;
     next();
@@ -49,22 +53,25 @@ async function run() {
     // JWT Endpoint
     app.post("/jwt", (req, res) => {
       const user = req.body;
-      const token = jwt.sign(user, process.env.ACCESS_TOKEN_SECRET, { expiresIn: "1h" });
+      const token = jwt.sign(user, process.env.ACCESS_TOKEN_SECRET, {
+        expiresIn: "1h",
+      });
       res.send({ token });
     });
 
-    // Verify admin middleware 
+    // Verify admin middleware
 
-    const verifyAdmin = async(req , res , next ) => {
-      const email = req.decoded.email; 
-      const query = {email : email}
+    const verifyAdmin = async (req, res, next) => {
+      const email = req.decoded.email;
+      const query = { email: email };
       const user = await usersCollections.findOne(query);
-      if(user?.role !== "admin"){
-        return res.status(403).send({ error: true, message: "Forbidden access" });
+      if (user?.role !== "admin") {
+        return res
+          .status(403)
+          .send({ error: true, message: "Forbidden access" });
       }
       next();
-    }
-
+    };
 
     // Get all collections
     app.get("/allCollections", async (req, res) => {
@@ -72,6 +79,22 @@ async function run() {
       res.send(result);
     });
 
+    app.get("/allCollection/:id", async (req, res) => {
+      const id = req.params.id;
+      console.log(`Fetching product with ID: ${id}`);
+      const query = { _id: new ObjectId(id) };
+      try {
+        const product = await allCollections.findOne(query);
+        if (product) {
+          res.send(product);
+        } else {
+          res.status(404).send({ error: true, message: "Product not found" });
+        }
+      } catch (error) {
+        console.error("Error fetching product:", error);
+        res.status(500).send({ error: "Failed to retrieve product" });
+      }
+    });
     // Save user
     app.post("/users", async (req, res) => {
       const user = req.body;
@@ -85,21 +108,21 @@ async function run() {
     });
 
     // Get users
-    app.get("/users", verifyJwt , verifyAdmin, async (req, res) => {
+    app.get("/users", verifyJwt, verifyAdmin, async (req, res) => {
       const result = await usersCollections.find().toArray();
       res.send(result);
     });
 
     // Check if user is admin
-    app.get('/users/admin/:email', verifyJwt, async (req, res) => {
+    app.get("/users/admin/:email", verifyJwt, async (req, res) => {
       const email = req.params.email;
       if (req.decoded.email !== email) {
         return res.send({ admin: false });
       }
-    
+
       const query = { email: email };
       const user = await usersCollections.findOne(query);
-      const result = { admin: user?.role === 'admin' };
+      const result = { admin: user?.role === "admin" };
       res.send(result);
     });
 
@@ -136,7 +159,9 @@ async function run() {
       }
       const decodedEmail = req.decoded.email;
       if (email !== decodedEmail) {
-        return res.status(403).send({ error: true, message: "Forbidden access" });
+        return res
+          .status(403)
+          .send({ error: true, message: "Forbidden access" });
       }
       const query = { email: email };
       const result = await cartCollection.find(query).toArray();
