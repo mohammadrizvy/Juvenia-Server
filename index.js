@@ -79,10 +79,10 @@ async function run() {
       res.send(result);
     });
 
-    app.get("/allCollection/:id", async (req, res) => {
+    app.get("/allCollections/:id", async (req, res) => {
       const id = req.params.id;
       console.log(`Fetching product with ID: ${id}`);
-      const query = { _id: new ObjectId(id) };
+      const query = { _id: id };
       try {
         const product = await allCollections.findOne(query);
         if (product) {
