@@ -43,13 +43,9 @@ const client = new MongoClient(uri, {
 
 async function run() {
   try {
-<<<<<<< HEAD
     // Connect to MongoDB
     await client.connect();
     console.log("Connected to MongoDB!");
-=======
-    await client.connect();
->>>>>>> ebe4eb9a2d200b0fb3d5a417b470b407102be86e
 
     const database = client.db("chicDB");
     const allCollections = database.collection("allCollections");
@@ -60,20 +56,12 @@ async function run() {
     app.post("/jwt", (req, res) => {
       const user = req.body;
       const token = jwt.sign(user, process.env.ACCESS_TOKEN_SECRET, {
-<<<<<<< HEAD
         expiresIn: "12h",
-=======
-        expiresIn: "1h",
->>>>>>> ebe4eb9a2d200b0fb3d5a417b470b407102be86e
       });
       res.send({ token });
     });
 
     // Verify admin middleware
-<<<<<<< HEAD
-=======
-
->>>>>>> ebe4eb9a2d200b0fb3d5a417b470b407102be86e
     const verifyAdmin = async (req, res, next) => {
       const email = req.decoded.email;
       const query = { email: email };
@@ -86,7 +74,6 @@ async function run() {
       next();
     };
 
-<<<<<<< HEAD
     app.post("/allCollections", verifyJwt, verifyAdmin, async (req, res) => {
       const newProduct = req.body;
       
@@ -99,15 +86,12 @@ async function run() {
       }
     });
 
-=======
->>>>>>> ebe4eb9a2d200b0fb3d5a417b470b407102be86e
     // Get all collections
     app.get("/allCollections", async (req, res) => {
       const result = await allCollections.find().toArray();
       res.send(result);
     });
 
-<<<<<<< HEAD
     app.delete("/allCollections/:id", verifyJwt, verifyAdmin, async (req, res) => {
       const id = req.params.id;
       const query = { _id: new ObjectId(id) };
@@ -124,8 +108,6 @@ async function run() {
       }
     });
 
-=======
->>>>>>> ebe4eb9a2d200b0fb3d5a417b470b407102be86e
     app.get("/allCollections/:id", async (req, res) => {
       const id = req.params.id;
       console.log(`Fetching product with ID: ${id}`);
@@ -142,10 +124,6 @@ async function run() {
         res.status(500).send({ error: "Failed to retrieve product" });
       }
     });
-<<<<<<< HEAD
-
-=======
->>>>>>> ebe4eb9a2d200b0fb3d5a417b470b407102be86e
     // Save user
     app.post("/users", async (req, res) => {
       const user = req.body;
@@ -186,7 +164,6 @@ async function run() {
       res.send(result);
     });
 
-<<<<<<< HEAD
     app.patch("/users/remove-admin/:id", async (req, res) => {
       const id = req.params.id;
       const filter = { _id: new ObjectId(id) };
@@ -195,8 +172,6 @@ async function run() {
       res.send(result);
     });
 
-=======
->>>>>>> ebe4eb9a2d200b0fb3d5a417b470b407102be86e
     // Remove user
     app.delete("/users/:id", async (req, res) => {
       const id = req.params.id;
@@ -245,14 +220,9 @@ async function run() {
     // Confirm connection
     await client.db("admin").command({ ping: 1 });
     console.log("Connected to MongoDB!");
-<<<<<<< HEAD
   } catch (err) {
     console.error("Failed to connect to MongoDB:", err);
     process.exit(1);
-=======
-  } finally {
-    // Leave client open to avoid closing connections prematurely
->>>>>>> ebe4eb9a2d200b0fb3d5a417b470b407102be86e
   }
 }
 run().catch(console.dir);
@@ -262,9 +232,5 @@ app.get("/", (req, res) => {
 });
 
 app.listen(port, () => {
-<<<<<<< HEAD
   console.log(`Juvenia is running on port ${port}`);
-=======
-  console.log(`Chic is running on port ${port}`);
->>>>>>> ebe4eb9a2d200b0fb3d5a417b470b407102be86e
 });
