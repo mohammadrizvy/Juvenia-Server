@@ -96,17 +96,38 @@ async function run() {
 
     app.delete("/allCollections/manage-items/:id", async (req, res) => {
       const id = req.params.id;
-      console.log("Product delete id :", id)
-      const query = { _id:  id };
+      console.log("Product delete id :", id);
+      const query = { _id: new ObjectId(id) };
       const result = await allCollections.deleteOne(query);
       res.send(result);
+    });
+
+    //!Update product informations/details
+
+    app.put("/allCollections/update-product/:id", async (req, res) => {
+      const id = req.params.id;
+      const updateData = req.body;
+
+      try {
+        const result = await allCollections.updateOne(
+          { _id: new ObjectId(id) }, // Filter to match the document
+          { $set: updateData } // Update operation
+        );
+
+        if (result.matchedCount === 0) {
+          return res.status(404).send("Product not found");
+        }
+        res.status(200).send("Product updated successfully");
+      } catch (error) {
+        console.error("Error updating product:", error);
+        res.status(500).send("Server error");
+      }
     });
 
     // !Find single product
     app.get("/allCollections/:id", async (req, res) => {
       const id = req.params.id;
-      console.log(`Fetching product with ID: ${id}`);
-      const query = { _id: id };
+      const query = { _id: new ObjectId(id) };
       try {
         const product = await allCollections.findOne(query);
         if (product) {
@@ -136,7 +157,7 @@ async function run() {
       })} ${now.getFullYear()}`;
 
       user.createdAt = formattedDate;
-      user.status = "Active"
+      user.status = "Active";
 
       const result = await usersCollections.insertOne(user);
       res.send(result);
@@ -148,8 +169,7 @@ async function run() {
       res.send(result);
     });
 
-    app.get
-
+    app.get;
 
     //! Check if user is admin
     app.get("/users/admin/:email", verifyJwt, async (req, res) => {
@@ -189,23 +209,25 @@ async function run() {
       res.send(result);
     });
 
-app.get("/users/:id", async (req, res) => {
-  const id = req.params.id;
+    // !Getting single user
 
-  try {
-    const query = { _id: new ObjectId(id) }; // Convert id string to ObjectId
-    const result = await usersCollections.findOne(query);
+    app.get("/users/:id", async (req, res) => {
+      const id = req.params.id;
 
-    if (!result) {
-      return res.status(404).send({ message: "User not found" });
-    }
+      try {
+        const query = { _id: new ObjectId(id) }; // Convert id string to ObjectId
+        const result = await usersCollections.findOne(query);
 
-    res.send(result);
-  } catch (error) {
-    console.error("Error fetching user:", error);
-    res.status(500).send({ message: "Internal server error" });
-  }
-});
+        if (!result) {
+          return res.status(404).send({ message: "User not found" });
+        }
+
+        res.send(result);
+      } catch (error) {
+        console.error("Error fetching user:", error);
+        res.status(500).send({ message: "Internal server error" });
+      }
+    });
     //! Post cart data
     app.post("/carts", async (req, res) => {
       const item = req.body;
