@@ -107,21 +107,12 @@ async function run() {
     app.put("/allCollections/update-product/:id", async (req, res) => {
       const id = req.params.id;
       const updateData = req.body;
-
-      try {
-        const result = await allCollections.updateOne(
-          { _id: new ObjectId(id) }, // Filter to match the document
-          { $set: updateData } // Update operation
-        );
-
-        if (result.matchedCount === 0) {
-          return res.status(404).send("Product not found");
-        }
-        res.status(200).send("Product updated successfully");
-      } catch (error) {
-        console.error("Error updating product:", error);
-        res.status(500).send("Server error");
-      }
+      console.log(updateData)
+      const result = await allCollections.updateOne(
+        { _id: new ObjectId(id) },
+        { $set: updateData }
+      );
+      res.send(result);
     });
 
     // !Find single product
